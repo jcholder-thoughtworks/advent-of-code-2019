@@ -1,11 +1,16 @@
-type Mass = i32;
+use std::env;
+
+type Mass = u32;
 
 fn main() {
-    println!("Hello, world!");
+    for arg in env::args().skip(1) {
+        let parsed: Mass = arg.parse().unwrap();
+        println!("Fuel required: {:?}", fuel_required(parsed));
+    }
 }
 
-fn fuel_required(_mass: Mass) -> Mass {
-    0
+fn fuel_required(mass: Mass) -> Mass {
+    (mass / 3) - 2
 }
 
 #[cfg(test)]
