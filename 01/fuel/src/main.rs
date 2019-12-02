@@ -3,7 +3,7 @@ use std::io::{self, BufReader};
 use std::io::prelude::*;
 use std::fs::File;
 
-type Mass = u32;
+type Mass = i32;
 
 fn main() -> io::Result<()> {
     let args: Vec<String> = env::args().collect();
@@ -32,9 +32,8 @@ fn main() -> io::Result<()> {
         if naive {
             total_fuel += naive_fuel_required(module_mass);
         } else {
-            total_fuel += naive_fuel_required(module_mass);
+            total_fuel += correct_fuel_required(module_mass);
         }
-        // println!("{:?}", naive_fuel_required(parsed));
     }
 
     println!("Total fuel required: {:?}", total_fuel);
@@ -47,7 +46,16 @@ fn naive_fuel_required(mass: Mass) -> Mass {
 }
 
 fn correct_fuel_required(mass: Mass) -> Mass {
-    (mass / 3) - 2
+    let mut total_fuel: Mass = 0;
+
+    let mut fuel_required = (mass / 3) - 2;
+
+    while fuel_required > 0 {
+        total_fuel += fuel_required;
+        fuel_required = (fuel_required / 3) - 2;
+    }
+
+    total_fuel
 }
 
 #[cfg(test)]
