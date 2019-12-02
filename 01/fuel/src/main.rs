@@ -1,12 +1,29 @@
 use std::env;
+use std::io::{self, BufReader};
+use std::io::prelude::*;
+use std::fs::File;
 
 type Mass = u32;
 
-fn main() {
-    for arg in env::args().skip(1) {
-        let parsed: Mass = arg.parse().unwrap();
-        println!("Fuel required: {:?}", fuel_required(parsed));
+fn main() -> io::Result<()> {
+    let args: Vec<String> = env::args().collect();
+    let filename = &args[1];
+
+    let file = File::open(filename)?;
+    let file = BufReader::new(file);
+
+    let lines_iter = file.lines().map(|l| l.unwrap());
+
+    for line in lines_iter {
+        if line.len() == 0 { // skip blank lines, e.g. trailing returns
+            continue;
+        }
+
+        let parsed: Mass = line.parse().unwrap();
+        println!("{:?}", fuel_required(parsed));
     }
+
+    Ok(())
 }
 
 fn fuel_required(mass: Mass) -> Mass {
