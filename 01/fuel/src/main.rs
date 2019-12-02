@@ -1,8 +1,10 @@
+type Mass = i32;
+
 fn main() {
     println!("Hello, world!");
 }
 
-fn fuel_required(mass: i32) -> i32 {
+fn fuel_required(mass: Mass) -> Mass {
     0
 }
 
