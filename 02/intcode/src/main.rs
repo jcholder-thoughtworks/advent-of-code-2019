@@ -4,34 +4,6 @@ type Cursor = usize;
 fn main() {
 }
 
-fn apply_addition(program: IntcodeProgram, cursor: Cursor) -> IntcodeProgram {
-    let left_index = program[cursor + 1] as usize;
-    let right_index = program[cursor + 2] as usize;
-    let destination = program[cursor + 3] as usize;
-
-    let sum = program[left_index] + program[right_index];
-
-    let mut new_program = program.to_vec();
-
-    new_program[destination] = sum;
-
-    new_program
-}
-
-fn apply_multiplication(program: IntcodeProgram, cursor: Cursor) -> IntcodeProgram {
-    let left_index = program[cursor + 1] as usize;
-    let right_index = program[cursor + 2] as usize;
-    let destination = program[cursor + 3] as usize;
-
-    let product = program[left_index] * program[right_index];
-
-    let mut new_program = program.to_vec();
-
-    new_program[destination] = product;
-
-    new_program
-}
-
 fn execute_intcode(program: IntcodeProgram, cursor: Cursor) -> IntcodeProgram {
     let command = program[cursor];
 
@@ -39,13 +11,24 @@ fn execute_intcode(program: IntcodeProgram, cursor: Cursor) -> IntcodeProgram {
         return program;
     }
 
-    let program = match command {
-        1 => apply_addition(program, cursor),
-        2 => apply_multiplication(program, cursor),
+    let left_index = program[cursor + 1] as usize;
+    let right_index = program[cursor + 2] as usize;
+    let destination = program[cursor + 3] as usize;
+
+    let left_value = program[left_index];
+    let right_value = program[right_index];
+
+    let new_value = match command {
+        1 => left_value + right_value,
+        2 => left_value * right_value,
         _ => panic!("Unrecognized command: {:?}", command),
     };
 
-    execute_intcode(program, cursor + 4)
+    let mut new_program = program.to_vec();
+
+    new_program[destination] = new_value;
+
+    execute_intcode(new_program, cursor + 4)
 }
 
 #[cfg(test)]
