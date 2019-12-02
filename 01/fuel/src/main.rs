@@ -46,6 +46,10 @@ fn naive_fuel_required(mass: Mass) -> Mass {
     (mass / 3) - 2
 }
 
+fn correct_fuel_required(mass: Mass) -> Mass {
+    (mass / 3) - 2
+}
+
 #[cfg(test)]
 mod tests {
     use super::*;
@@ -68,5 +72,25 @@ mod tests {
     #[test]
     fn mass_100756_naive() {
         assert_eq!(naive_fuel_required(100756), 33583);
+    }
+
+    #[test]
+    fn mass_12_correct() {
+        assert_eq!(correct_fuel_required(12), 2);
+    }
+
+    #[test]
+    fn mass_14_correct() {
+        assert_eq!(correct_fuel_required(14), 2);
+    }
+
+    #[test]
+    fn mass_1969_correct() {
+        assert_eq!(correct_fuel_required(1969), 966);
+    }
+
+    #[test]
+    fn mass_100756_correct() {
+        assert_eq!(correct_fuel_required(100756), 50346);
     }
 }
