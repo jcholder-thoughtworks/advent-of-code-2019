@@ -14,14 +14,15 @@ fn main() -> io::Result<()> {
 
     let lines_iter = file.lines().map(|l| l.unwrap());
 
-    for line in lines_iter {
-        if line.len() == 0 { // skip blank lines, e.g. trailing returns
-            continue;
-        }
+    let mut total_fuel: Mass = 0;
 
-        let parsed: Mass = line.parse().unwrap();
-        println!("{:?}", fuel_required(parsed));
+    for line in lines_iter {
+        let module_mass: Mass = line.parse().unwrap();
+        total_fuel += fuel_required(module_mass);
+        // println!("{:?}", fuel_required(parsed));
     }
+
+    println!("Total fuel required: {:?}", total_fuel);
 
     Ok(())
 }
