@@ -1,7 +1,30 @@
+use std::fs;
+use std::io::{self};
+use std::io::Result;
+
 type IntcodeProgram = Vec<i32>;
 type Cursor = usize;
 
-fn main() {
+fn main() -> io::Result<()> {
+    let program = fs::read_to_string("input.txt")?;
+    let program = program.trim().split(',');
+    let program: IntcodeProgram = program.map(|c| c.parse().unwrap()).collect();
+
+    println!("Input: {:?}", program);
+    // TODO: Use refs to avoid unnecessary duplication
+    println!("Original output: {:?}", execute_intcode(program.to_vec(), 0));
+    println!("Fixed output: {:?}", execute_intcode(apply_fix(program), 0));
+
+    Ok(())
+}
+
+fn apply_fix(program: IntcodeProgram) -> IntcodeProgram {
+    let mut new_program = program.to_vec();
+
+    new_program[1] = 12;
+    new_program[2] = 2;
+
+    new_program
 }
 
 fn execute_intcode(program: IntcodeProgram, cursor: Cursor) -> IntcodeProgram {
