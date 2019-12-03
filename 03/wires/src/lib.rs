@@ -20,6 +20,29 @@ pub struct Wire {
     segments: Vec<Segment>,
 }
 
+impl Segment {
+    pub fn intersects(&self, segment2: &Segment) -> bool {
+        let segment1 = self;
+
+        let too_high_0 = segment1.start.x > segment2.start.x && segment1.start.x > segment2.end.x;
+        let too_low_0 = segment1.start.x < segment2.start.x && segment1.start.x < segment2.end.x;
+        let too_left_0 = segment1.start.y > segment2.start.y && segment1.start.y > segment2.end.y;
+        let too_right_0 = segment1.start.y < segment2.start.y && segment1.start.y < segment2.end.y;
+
+        let too_high_1 = segment1.end.x > segment2.start.x && segment1.end.x > segment2.end.x;
+        let too_low_1 = segment1.end.x < segment2.start.x && segment1.end.x < segment2.end.x;
+        let too_left_1 = segment1.end.y > segment2.start.y && segment1.end.y > segment2.end.y;
+        let too_right_1 = segment1.end.y < segment2.start.y && segment1.end.y < segment2.end.y;
+
+        let too_high = too_high_0 && too_high_1;
+        let too_low = too_low_0 && too_low_1;
+        let too_left = too_left_0 && too_left_1;
+        let too_right = too_right_0 && too_right_1;
+
+        ! (too_high || too_low || too_left || too_right)
+    }
+}
+
 impl Wire {
     pub fn new() -> Self {
         Self { segments: vec![] }
@@ -122,22 +145,7 @@ fn intersection_points_between(wire1: &Wire, wire2: &Wire) -> Vec<Point> {
     // Skipping origin point intersection
     for segment1 in wire1.segments.iter().skip(1) {
         for segment2 in wire2.segments.iter() {
-            let too_high_0 = segment1.start.x > segment2.start.x && segment1.start.x > segment2.end.x;
-            let too_low_0 = segment1.start.x < segment2.start.x && segment1.start.x < segment2.end.x;
-            let too_left_0 = segment1.start.y > segment2.start.y && segment1.start.y > segment2.end.y;
-            let too_right_0 = segment1.start.y < segment2.start.y && segment1.start.y < segment2.end.y;
-
-            let too_high_1 = segment1.end.x > segment2.start.x && segment1.end.x > segment2.end.x;
-            let too_low_1 = segment1.end.x < segment2.start.x && segment1.end.x < segment2.end.x;
-            let too_left_1 = segment1.end.y > segment2.start.y && segment1.end.y > segment2.end.y;
-            let too_right_1 = segment1.end.y < segment2.start.y && segment1.end.y < segment2.end.y;
-
-            let too_high = too_high_0 && too_high_1;
-            let too_low = too_low_0 && too_low_1;
-            let too_left = too_left_0 && too_left_1;
-            let too_right = too_right_0 && too_right_1;
-
-            if too_high || too_low || too_left || too_right {
+            if !segment1.intersects(&segment2) {
                 continue;
             }
 
