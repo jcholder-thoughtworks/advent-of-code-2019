@@ -43,12 +43,26 @@ impl Wire {
     }
 }
 
-impl From<String> for Wire {
-    fn from(source: String) -> Self {
-        Wire::new()
+impl From<&str> for Wire {
+    fn from(source: &str) -> Self {
+        let directions = source.trim().split(',').map(|d| {
+            let direction = d.chars().next();
+            let length: i32 = d[1..].parse().unwrap();
+
+            match direction {
+                Some('U') => WD::U(length),
+                Some('R') => WD::R(length),
+                Some('D') => WD::D(length),
+                Some('L') => WD::L(length),
+                _ => panic!("Invalid wire length: {}", d),
+            }
+        }).collect();
+
+        wire_from_directions(&directions)
     }
 }
 
+#[derive(Debug)]
 enum WireDirection {
     U(i32), // Up
     R(i32), // Right
@@ -141,11 +155,8 @@ pub mod tests {
 
     #[test]
     fn minimal_program() {
-        let wire_directions1 = vec![WD::R(10), WD::U(10)];
-        let wire_directions2 = vec![WD::U(5), WD::R(15)];
-
-        let wire1 = wire_from_directions(&wire_directions1);
-        let wire2 = wire_from_directions(&wire_directions2);
+        let wire1 = Wire::from("R10,U10");
+        let wire2 = Wire::from("U5,R15");
 
         assert_eq!(wire1.closest_intersection_distance_with(&wire2), 15);
     }
