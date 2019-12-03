@@ -7,12 +7,12 @@ fn main() -> io::Result<()> {
     let code = fs::read_to_string("input.txt")?;
     let program = parse_code(code);
 
-    let original_program = execute_intcode(program.to_vec());
-    let fixed_program = execute_intcode(apply_fix(program.to_vec()));
+    let original_output = execute_intcode(program.to_vec());
+    let fixed_output = execute_intcode(apply_fix(program.to_vec()));
 
     println!("Input: {:?}", program);
-    println!("Original output: {:?}", original_program);
-    println!("Fixed output: {:?}", fixed_program);
+    println!("Original output: {:?}", original_output);
+    println!("Fixed output: {:?}", fixed_output);
 
     Ok(())
 }
