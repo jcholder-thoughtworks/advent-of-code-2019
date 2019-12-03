@@ -13,8 +13,8 @@ fn main() -> io::Result<()> {
     let fixed_program = apply_fix(program.to_vec());
 
     println!("Input: {:?}", program);
-    println!("Original output: {:?}", execute_intcode(original_program, 0));
-    println!("Fixed output: {:?}", execute_intcode(fixed_program, 0));
+    println!("Original output: {:?}", execute_intcode(original_program));
+    println!("Fixed output: {:?}", execute_intcode(fixed_program));
 
     Ok(())
 }
@@ -26,7 +26,11 @@ fn apply_fix(mut program: IntcodeProgram) -> IntcodeProgram {
     program
 }
 
-fn execute_intcode(mut program: IntcodeProgram, pointer: Pointer) -> IntcodeProgram {
+fn execute_intcode(program: IntcodeProgram) -> IntcodeProgram {
+    execute_intcode_at_pointer(program, 0)
+}
+
+fn execute_intcode_at_pointer(mut program: IntcodeProgram, pointer: Pointer) -> IntcodeProgram {
     let command = program[pointer];
 
     if command == 99 {
@@ -48,7 +52,7 @@ fn execute_intcode(mut program: IntcodeProgram, pointer: Pointer) -> IntcodeProg
 
     program[destination] = new_value;
 
-    execute_intcode(program, pointer + 4)
+    execute_intcode_at_pointer(program, pointer + 4)
 }
 
 #[cfg(test)]
@@ -61,7 +65,7 @@ mod tests {
 
         let expected = vec![2, 0, 0, 0, 99];
 
-        assert_eq!(expected, execute_intcode(program, 0));
+        assert_eq!(expected, execute_intcode(program));
     }
 
     #[test]
@@ -70,7 +74,7 @@ mod tests {
 
         let expected = vec![3500, 9, 10, 70, 2, 3, 11, 0, 99, 30, 40, 50];
 
-        assert_eq!(expected, execute_intcode(program, 0));
+        assert_eq!(expected, execute_intcode(program));
     }
 
     #[test]
@@ -79,7 +83,7 @@ mod tests {
 
         let expected = vec![2,0,0,0,99];
 
-        assert_eq!(expected, execute_intcode(program, 0));
+        assert_eq!(expected, execute_intcode(program));
     }
 
     #[test]
@@ -88,7 +92,7 @@ mod tests {
 
         let expected = vec![2,3,0,6,99];
 
-        assert_eq!(expected, execute_intcode(program, 0));
+        assert_eq!(expected, execute_intcode(program));
     }
 
     #[test]
@@ -97,7 +101,7 @@ mod tests {
 
         let expected = vec![2,4,4,5,99,9801];
 
-        assert_eq!(expected, execute_intcode(program, 0));
+        assert_eq!(expected, execute_intcode(program));
     }
 
     #[test]
@@ -106,6 +110,6 @@ mod tests {
 
         let expected = vec![30,1,1,4,2,5,6,0,99];
 
-        assert_eq!(expected, execute_intcode(program, 0));
+        assert_eq!(expected, execute_intcode(program));
     }
 }
