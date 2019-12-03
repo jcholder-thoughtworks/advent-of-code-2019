@@ -11,7 +11,6 @@ fn main() -> io::Result<()> {
     let program: IntcodeProgram = program.map(|c| c.parse().unwrap()).collect();
 
     println!("Input: {:?}", program);
-    // TODO: Use refs to avoid unnecessary duplication
     println!("Original output: {:?}", execute_intcode(program.to_vec(), 0));
     println!("Fixed output: {:?}", execute_intcode(apply_fix(program), 0));
 
