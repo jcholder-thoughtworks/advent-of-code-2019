@@ -1,6 +1,5 @@
 use std::fs;
 use std::io::{self};
-use std::io::Result;
 
 type IntcodeProgram = Vec<i32>;
 type Pointer = usize;
