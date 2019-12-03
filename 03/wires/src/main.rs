@@ -20,9 +20,9 @@ enum WireDirection {
 
 type WD = WireDirection;
 
-type Wire = Vec<WireDirection>;
+type WireInstructions = Vec<WireDirection>;
 
-fn closest_intersection_distance(wire1: &Wire, wire2: &Wire) -> Distance {
+fn closest_intersection_distance(wire1: &WireInstructions, wire2: &WireInstructions) -> Distance {
     0
 }
 
@@ -32,9 +32,9 @@ pub mod tests {
 
     #[test]
     fn minimal_program() {
-        let wire1 = vec![WD::R(10), WD::U(10)];
-        let wire2 = vec![WD::U(5), WD::R(15)];
+        let wire_instructions1 = vec![WD::R(10), WD::U(10)];
+        let wire_instructions2 = vec![WD::U(5), WD::R(15)];
 
-        assert_eq!(closest_intersection_distance(&wire1, &wire2), 15);
+        assert_eq!(closest_intersection_distance(&wire_instructions1, &wire_instructions2), 15);
     }
 }
