@@ -45,7 +45,7 @@ impl Wire {
 
 impl From<&str> for Wire {
     fn from(source: &str) -> Self {
-        let directions = source.trim().split(',').map(|d| {
+        let directions: WireDirections = source.trim().split(',').map(|d| {
             let direction = d.chars().next();
             let length: i32 = d[1..].parse().unwrap();
 
@@ -58,7 +58,29 @@ impl From<&str> for Wire {
             }
         }).collect();
 
-        wire_from_directions(&directions)
+        let mut wire = Wire::new();
+
+        let mut x = 0;
+        let mut y = 0;
+
+        for direction in directions {
+            let start = Point { x, y };
+            let end = match direction {
+                WD::U(distance) => Point { x, y: y + distance },
+                WD::R(distance) => Point { x: x + distance, y },
+                WD::D(distance) => Point { x, y: y - distance },
+                WD::L(distance) => Point { x: x - distance, y },
+            };
+
+            x = end.x;
+            y = end.y;
+
+            let new_segment = Segment(start, end);
+
+            wire.segments.push(new_segment);
+        }
+
+        wire
     }
 }
 
@@ -121,32 +143,6 @@ fn intersection_points_between(wire1: &Wire, wire2: &Wire) -> Vec<Point> {
     }
 
     intersection_points
-}
-
-fn wire_from_directions(wire_directions: &WireDirections) -> Wire {
-    let mut wire = Wire::new();
-
-    let mut x = 0;
-    let mut y = 0;
-
-    for direction in wire_directions {
-        let start = Point { x, y };
-        let end = match direction {
-            WD::U(distance) => Point { x, y: y + distance },
-            WD::R(distance) => Point { x: x + distance, y },
-            WD::D(distance) => Point { x, y: y - distance },
-            WD::L(distance) => Point { x: x - distance, y },
-        };
-
-        x = end.x;
-        y = end.y;
-
-        let new_segment = Segment(start, end);
-
-        wire.segments.push(new_segment);
-    }
-
-    wire
 }
 
 #[cfg(test)]
