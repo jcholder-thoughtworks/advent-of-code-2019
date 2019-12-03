@@ -31,8 +31,8 @@ fn closest_intersection_distance(
     wire_directions2: &WireDirections
     ) -> Distance {
 
-    let wire1 = directions_to_wire(wire_directions1);
-    let wire2 = directions_to_wire(wire_directions2);
+    let wire1 = wire_from_directions(wire_directions1);
+    let wire2 = wire_from_directions(wire_directions2);
 
     println!("Test output: {:?}", wire1);
     println!("Test output: {:?}", wire2);
@@ -42,7 +42,7 @@ fn closest_intersection_distance(
     0
 }
 
-fn directions_to_wire(wire_directions: &WireDirections) -> Wire {
+fn wire_from_directions(wire_directions: &WireDirections) -> Wire {
     let mut wire: Wire = vec![];
 
     let mut x = 0;
