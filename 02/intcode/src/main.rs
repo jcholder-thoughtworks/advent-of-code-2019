@@ -12,18 +12,19 @@ fn main() -> io::Result<()> {
 
     println!("Input: {:?}", program);
     println!("Original output: {:?}", execute_intcode(program.to_vec(), 0));
-    println!("Fixed output: {:?}", execute_intcode(apply_fix(program), 0));
+
+    let program = apply_fix(program);
+
+    println!("Fixed output: {:?}", execute_intcode(program, 0));
 
     Ok(())
 }
 
-fn apply_fix(program: IntcodeProgram) -> IntcodeProgram {
-    let mut new_program = program.to_vec();
+fn apply_fix(mut program: IntcodeProgram) -> IntcodeProgram {
+    program[1] = 12;
+    program[2] = 2;
 
-    new_program[1] = 12;
-    new_program[2] = 2;
-
-    new_program
+    program
 }
 
 fn execute_intcode(program: IntcodeProgram, cursor: Cursor) -> IntcodeProgram {
