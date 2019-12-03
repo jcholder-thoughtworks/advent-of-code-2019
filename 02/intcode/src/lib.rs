@@ -1,6 +1,7 @@
 pub type IntcodeProgram = Vec<i32>;
 pub type Pointer = usize;
 
+pub const OUTPUT: Pointer = 0;
 pub const NOUN: Pointer = 1;
 pub const VERB: Pointer = 2;
 
