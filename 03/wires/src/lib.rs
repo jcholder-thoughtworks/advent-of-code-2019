@@ -9,7 +9,11 @@ struct Point {
 }
 
 #[derive(Debug)]
-struct Segment(Point, Point);
+struct Segment {
+    start: Point,
+    end: Point,
+    length: Distance,
+}
 
 #[derive(Debug)]
 pub struct Wire {
@@ -71,11 +75,21 @@ impl From<&str> for Wire {
                 WD::D(distance) => Point { x, y: y - distance },
                 WD::L(distance) => Point { x: x - distance, y },
             };
+            let length = match direction {
+                WD::U(distance) => distance,
+                WD::R(distance) => distance,
+                WD::D(distance) => distance,
+                WD::L(distance) => distance,
+            };
 
             x = end.x;
             y = end.y;
 
-            let new_segment = Segment(start, end);
+            let new_segment = Segment {
+                start,
+                end,
+                length,
+            };
 
             wire.segments.push(new_segment);
         }
@@ -108,15 +122,15 @@ fn intersection_points_between(wire1: &Wire, wire2: &Wire) -> Vec<Point> {
     // Skipping origin point intersection
     for segment1 in wire1.segments.iter().skip(1) {
         for segment2 in wire2.segments.iter() {
-            let too_high_0 = segment1.0.x > segment2.0.x && segment1.0.x > segment2.1.x;
-            let too_low_0 = segment1.0.x < segment2.0.x && segment1.0.x < segment2.1.x;
-            let too_left_0 = segment1.0.y > segment2.0.y && segment1.0.y > segment2.1.y;
-            let too_right_0 = segment1.0.y < segment2.0.y && segment1.0.y < segment2.1.y;
+            let too_high_0 = segment1.start.x > segment2.start.x && segment1.start.x > segment2.end.x;
+            let too_low_0 = segment1.start.x < segment2.start.x && segment1.start.x < segment2.end.x;
+            let too_left_0 = segment1.start.y > segment2.start.y && segment1.start.y > segment2.end.y;
+            let too_right_0 = segment1.start.y < segment2.start.y && segment1.start.y < segment2.end.y;
 
-            let too_high_1 = segment1.1.x > segment2.0.x && segment1.1.x > segment2.1.x;
-            let too_low_1 = segment1.1.x < segment2.0.x && segment1.1.x < segment2.1.x;
-            let too_left_1 = segment1.1.y > segment2.0.y && segment1.1.y > segment2.1.y;
-            let too_right_1 = segment1.1.y < segment2.0.y && segment1.1.y < segment2.1.y;
+            let too_high_1 = segment1.end.x > segment2.start.x && segment1.end.x > segment2.end.x;
+            let too_low_1 = segment1.end.x < segment2.start.x && segment1.end.x < segment2.end.x;
+            let too_left_1 = segment1.end.y > segment2.start.y && segment1.end.y > segment2.end.y;
+            let too_right_1 = segment1.end.y < segment2.start.y && segment1.end.y < segment2.end.y;
 
             let too_high = too_high_0 && too_high_1;
             let too_low = too_low_0 && too_low_1;
@@ -130,12 +144,12 @@ fn intersection_points_between(wire1: &Wire, wire2: &Wire) -> Vec<Point> {
             let x;
             let y;
 
-            if segment1.0.x == segment1.1.x { // assume vertical line
-                x = segment1.0.x;
-                y = segment2.0.y;
+            if segment1.start.x == segment1.end.x { // assume vertical line
+                x = segment1.start.x;
+                y = segment2.start.y;
             } else { // assume horizontal line
-                x = segment2.0.x;
-                y = segment1.0.y;
+                x = segment2.start.x;
+                y = segment1.start.y;
             }
 
             intersection_points.push(Point { x, y });
