@@ -37,6 +37,10 @@ impl Wire {
 
         closest_distance_per_point.distance
     }
+
+    pub fn shortest_circuit_distance_with(&self, wire2: &Wire) -> Distance {
+        0
+    }
 }
 
 impl From<&str> for Wire {
@@ -145,27 +149,31 @@ fn intersection_points_between(wire1: &Wire, wire2: &Wire) -> Vec<Point> {
 pub mod tests {
     use super::*;
 
-    #[test]
-    fn minimal_program() {
-        let wire1 = Wire::from("R10,U10");
-        let wire2 = Wire::from("U5,R15");
+    pub mod closest_intersection {
+        use super::*;
 
-        assert_eq!(wire1.closest_intersection_distance_with(&wire2), 15);
-    }
+        #[test]
+        fn minimal_program() {
+            let wire1 = Wire::from("R10,U10");
+            let wire2 = Wire::from("U5,R15");
 
-    #[test]
-    fn example1() {
-        let wire1 = Wire::from("R75,D30,R83,U83,L12,D49,R71,U7,L72");
-        let wire2 = Wire::from("U62,R66,U55,R34,D71,R55,D58,R83");
+            assert_eq!(wire1.closest_intersection_distance_with(&wire2), 15);
+        }
 
-        assert_eq!(wire1.closest_intersection_distance_with(&wire2), 159);
-    }
+        #[test]
+        fn example1() {
+            let wire1 = Wire::from("R75,D30,R83,U83,L12,D49,R71,U7,L72");
+            let wire2 = Wire::from("U62,R66,U55,R34,D71,R55,D58,R83");
 
-    #[test]
-    fn example2() {
-        let wire1 = Wire::from("R98,U47,R26,D63,R33,U87,L62,D20,R33,U53,R51");
-        let wire2 = Wire::from("U98,R91,D20,R16,D67,R40,U7,R15,U6,R7");
+            assert_eq!(wire1.closest_intersection_distance_with(&wire2), 159);
+        }
 
-        assert_eq!(wire1.closest_intersection_distance_with(&wire2), 135);
+        #[test]
+        fn example2() {
+            let wire1 = Wire::from("R98,U47,R26,D63,R33,U87,L62,D20,R33,U53,R51");
+            let wire2 = Wire::from("U98,R91,D20,R16,D67,R40,U7,R15,U6,R7");
+
+            assert_eq!(wire1.closest_intersection_distance_with(&wire2), 135);
+        }
     }
 }

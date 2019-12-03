@@ -13,7 +13,7 @@ fn main() -> io::Result<()> {
     let wire1 = Wire::from(lines[0].as_str());
     let wire2 = Wire::from(lines[1].as_str());
 
-    //println!("Distance: {}", wire1.closest_intersection_distance_with(&wire2));
+    println!("Distance: {}", wire1.shortest_circuit_distance_with(&wire2));
 
     Ok(())
 }
