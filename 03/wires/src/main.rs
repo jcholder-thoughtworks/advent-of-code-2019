@@ -4,6 +4,13 @@ fn main() {
 
 type Distance = i32;
 
+struct Point {
+    x: i32,
+    y: i32,
+}
+
+struct Segment(Point, Point);
+
 enum WireDirection {
     U(i32), // Up
     R(i32), // Right
