@@ -1,3 +1,5 @@
+use std::convert::From;
+
 fn main() {
     println!("Hello, world!");
 }
@@ -22,6 +24,29 @@ impl Wire {
     pub fn new() -> Self {
         Self { segments: vec![] }
     }
+
+    pub fn closest_intersection_distance_with(&self, wire2: &Wire) -> Distance {
+        let wire1 = self;
+
+        let intersection_points = intersection_points_between(&wire1, &wire2);
+
+        let distances_per_point: Vec<DistancePerPoint> = intersection_points.iter().map(|point| {
+            let distance = point.x.abs() + point.y.abs();
+            DistancePerPoint { distance, point: *point }
+        }).collect();
+
+        let closest_distance_per_point = distances_per_point.iter().min_by(|a, b| {
+            a.distance.cmp(&b.distance)
+        }).unwrap();
+
+        closest_distance_per_point.distance
+    }
+}
+
+impl From<String> for Wire {
+    fn from(source: String) -> Self {
+        Wire::new()
+    }
 }
 
 enum WireDirection {
@@ -39,37 +64,6 @@ type WireDirections = Vec<WireDirection>;
 struct DistancePerPoint {
     distance: i32,
     point: Point,
-}
-
-fn closest_intersection_distance(
-    wire_directions1: &WireDirections,
-    wire_directions2: &WireDirections
-    ) -> Distance {
-
-    let wire1 = wire_from_directions(wire_directions1);
-    let wire2 = wire_from_directions(wire_directions2);
-
-    println!("Wire 1: {:?}", wire1);
-    println!("Wire 2: {:?}", wire2);
-
-    let intersection_points = intersection_points_between(&wire1, &wire2);
-
-    println!("Intersection points: {:?}", intersection_points);
-
-    let distances_per_point: Vec<DistancePerPoint> = intersection_points.iter().map(|point| {
-        let distance = point.x.abs() + point.y.abs();
-        DistancePerPoint { distance, point: *point }
-    }).collect();
-
-    println!("Distances per point: {:?}", distances_per_point);
-
-    let closest_distance_per_point = distances_per_point.iter().min_by(|a, b| {
-        a.distance.cmp(&b.distance)
-    }).unwrap();
-
-    println!("Closest distance per point: {:?}", closest_distance_per_point);
-
-    closest_distance_per_point.distance
 }
 
 fn intersection_points_between(wire1: &Wire, wire2: &Wire) -> Vec<Point> {
@@ -150,7 +144,10 @@ pub mod tests {
         let wire_directions1 = vec![WD::R(10), WD::U(10)];
         let wire_directions2 = vec![WD::U(5), WD::R(15)];
 
-        assert_eq!(closest_intersection_distance(&wire_directions1, &wire_directions2), 15);
+        let wire1 = wire_from_directions(&wire_directions1);
+        let wire2 = wire_from_directions(&wire_directions2);
+
+        assert_eq!(wire1.closest_intersection_distance_with(&wire2), 15);
     }
 
     /*
