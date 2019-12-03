@@ -3,7 +3,7 @@ use std::io::{self};
 use std::io::Result;
 
 type IntcodeProgram = Vec<i32>;
-type Cursor = usize;
+type Pointer = usize;
 
 fn main() -> io::Result<()> {
     let program = fs::read_to_string("input.txt")?;
@@ -27,16 +27,16 @@ fn apply_fix(mut program: IntcodeProgram) -> IntcodeProgram {
     program
 }
 
-fn execute_intcode(mut program: IntcodeProgram, cursor: Cursor) -> IntcodeProgram {
-    let command = program[cursor];
+fn execute_intcode(mut program: IntcodeProgram, pointer: Pointer) -> IntcodeProgram {
+    let command = program[pointer];
 
     if command == 99 {
         return program;
     }
 
-    let left_index = program[cursor + 1] as usize;
-    let right_index = program[cursor + 2] as usize;
-    let destination = program[cursor + 3] as usize;
+    let left_index = program[pointer + 1] as usize;
+    let right_index = program[pointer + 2] as usize;
+    let destination = program[pointer + 3] as usize;
 
     let left_value = program[left_index];
     let right_value = program[right_index];
@@ -49,7 +49,7 @@ fn execute_intcode(mut program: IntcodeProgram, cursor: Cursor) -> IntcodeProgra
 
     program[destination] = new_value;
 
-    execute_intcode(program, cursor + 4)
+    execute_intcode(program, pointer + 4)
 }
 
 #[cfg(test)]
