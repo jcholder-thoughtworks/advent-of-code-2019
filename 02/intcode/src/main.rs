@@ -9,12 +9,12 @@ fn main() -> io::Result<()> {
     let program = program.trim().split(',');
     let program: IntcodeProgram = program.map(|c| c.parse().unwrap()).collect();
 
-    let original_program = program.to_vec();
-    let fixed_program = apply_fix(program.to_vec());
+    let original_program = execute_intcode(program.to_vec());
+    let fixed_program = execute_intcode(apply_fix(program.to_vec()));
 
     println!("Input: {:?}", program);
-    println!("Original output: {:?}", execute_intcode(original_program));
-    println!("Fixed output: {:?}", execute_intcode(fixed_program));
+    println!("Original output: {:?}", original_program);
+    println!("Fixed output: {:?}", fixed_program);
 
     Ok(())
 }
