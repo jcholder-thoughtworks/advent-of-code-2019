@@ -13,7 +13,16 @@ struct Point {
 #[derive(Debug)]
 struct Segment(Point, Point);
 
-type Wire = Vec<Segment>;
+#[derive(Debug)]
+struct Wire {
+    segments: Vec<Segment>,
+}
+
+impl Wire {
+    pub fn new() -> Self {
+        Self { segments: vec![] }
+    }
+}
 
 enum WireDirection {
     U(i32), // Up
@@ -67,8 +76,8 @@ fn intersection_points_between(wire1: &Wire, wire2: &Wire) -> Vec<Point> {
     let mut intersection_points = vec![];
 
     // Skipping origin point intersection
-    for segment1 in wire1.iter().skip(1) {
-        for segment2 in wire2 {
+    for segment1 in wire1.segments.iter().skip(1) {
+        for segment2 in wire2.segments.iter() {
             let too_high_0 = segment1.0.x > segment2.0.x && segment1.0.x > segment2.1.x;
             let too_low_0 = segment1.0.x < segment2.0.x && segment1.0.x < segment2.1.x;
             let too_left_0 = segment1.0.y > segment2.0.y && segment1.0.y > segment2.1.y;
@@ -107,7 +116,7 @@ fn intersection_points_between(wire1: &Wire, wire2: &Wire) -> Vec<Point> {
 }
 
 fn wire_from_directions(wire_directions: &WireDirections) -> Wire {
-    let mut wire: Wire = vec![];
+    let mut wire = Wire::new();
 
     let mut x = 0;
     let mut y = 0;
@@ -126,7 +135,7 @@ fn wire_from_directions(wire_directions: &WireDirections) -> Wire {
 
         let new_segment = Segment(start, end);
 
-        wire.push(new_segment);
+        wire.segments.push(new_segment);
     }
 
     wire
@@ -143,4 +152,12 @@ pub mod tests {
 
         assert_eq!(closest_intersection_distance(&wire_directions1, &wire_directions2), 15);
     }
+
+    /*
+    #[test]
+    fn example1() {
+        R75,D30,R83,U83,L12,D49,R71,U7,L72
+        U62,R66,U55,R34,D71,R55,D58,R83
+    }
+    */
 }
