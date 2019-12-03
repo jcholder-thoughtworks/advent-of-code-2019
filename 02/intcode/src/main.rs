@@ -4,6 +4,9 @@ use std::io::{self};
 type IntcodeProgram = Vec<i32>;
 type Pointer = usize;
 
+const NOUN: Pointer = 1;
+const VERB: Pointer = 2;
+
 fn main() -> io::Result<()> {
     let program = fs::read_to_string("input.txt")?;
     let program = program.trim().split(',');
@@ -20,8 +23,8 @@ fn main() -> io::Result<()> {
 }
 
 fn apply_fix(mut program: IntcodeProgram) -> IntcodeProgram {
-    program[1] = 12;
-    program[2] = 2;
+    program[NOUN] = 12;
+    program[VERB] = 2;
 
     program
 }
