@@ -10,12 +10,12 @@ fn main() -> io::Result<()> {
     let program = program.trim().split(',');
     let program: IntcodeProgram = program.map(|c| c.parse().unwrap()).collect();
 
+    let original_program = program.to_vec();
+    let fixed_program = apply_fix(program.to_vec());
+
     println!("Input: {:?}", program);
-    println!("Original output: {:?}", execute_intcode(program.to_vec(), 0));
-
-    let program = apply_fix(program);
-
-    println!("Fixed output: {:?}", execute_intcode(program, 0));
+    println!("Original output: {:?}", execute_intcode(original_program, 0));
+    println!("Fixed output: {:?}", execute_intcode(fixed_program, 0));
 
     Ok(())
 }
@@ -27,7 +27,7 @@ fn apply_fix(mut program: IntcodeProgram) -> IntcodeProgram {
     program
 }
 
-fn execute_intcode(program: IntcodeProgram, cursor: Cursor) -> IntcodeProgram {
+fn execute_intcode(mut program: IntcodeProgram, cursor: Cursor) -> IntcodeProgram {
     let command = program[cursor];
 
     if command == 99 {
@@ -47,11 +47,9 @@ fn execute_intcode(program: IntcodeProgram, cursor: Cursor) -> IntcodeProgram {
         _ => panic!("Unrecognized command: {:?}", command),
     };
 
-    let mut new_program = program.to_vec();
+    program[destination] = new_value;
 
-    new_program[destination] = new_value;
-
-    execute_intcode(new_program, cursor + 4)
+    execute_intcode(program, cursor + 4)
 }
 
 #[cfg(test)]
