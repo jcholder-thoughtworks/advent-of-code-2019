@@ -24,26 +24,31 @@ enum WireDirection {
 
 type WD = WireDirection;
 
-type WireInstructions = Vec<WireDirection>;
+type WireDirections = Vec<WireDirection>;
 
 fn closest_intersection_distance(
-    wire_instructions1: &WireInstructions,
-    wire_instructions2: &WireInstructions
+    wire_directions1: &WireDirections,
+    wire_directions2: &WireDirections
     ) -> Distance {
 
-    println!("Test output: {:?}", instructions_to_wire(wire_instructions1));
-    println!("Test output: {:?}", instructions_to_wire(wire_instructions2));
+    let wire1 = directions_to_wire(wire_directions1);
+    let wire2 = directions_to_wire(wire_directions2);
+
+    println!("Test output: {:?}", wire1);
+    println!("Test output: {:?}", wire2);
+
+    //let intersection_points = intersection_points_between(wire1, wire2);
 
     0
 }
 
-fn instructions_to_wire(wire_instructions: &WireInstructions) -> Wire {
+fn directions_to_wire(wire_directions: &WireDirections) -> Wire {
     let mut wire: Wire = vec![];
 
     let mut x = 0;
     let mut y = 0;
 
-    for direction in wire_instructions {
+    for direction in wire_directions {
         let start = Point { x, y };
         let end = match direction {
             WD::U(distance) => Point { x, y: y + distance },
@@ -69,9 +74,9 @@ pub mod tests {
 
     #[test]
     fn minimal_program() {
-        let wire_instructions1 = vec![WD::R(10), WD::U(10)];
-        let wire_instructions2 = vec![WD::U(5), WD::R(15)];
+        let wire_directions1 = vec![WD::R(10), WD::U(10)];
+        let wire_directions2 = vec![WD::U(5), WD::R(15)];
 
-        assert_eq!(closest_intersection_distance(&wire_instructions1, &wire_instructions2), 15);
+        assert_eq!(closest_intersection_distance(&wire_directions1, &wire_directions2), 15);
     }
 }
