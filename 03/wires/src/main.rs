@@ -34,12 +34,18 @@ fn closest_intersection_distance(
     let wire1 = wire_from_directions(wire_directions1);
     let wire2 = wire_from_directions(wire_directions2);
 
-    println!("Test output: {:?}", wire1);
-    println!("Test output: {:?}", wire2);
+    println!("Wire 1: {:?}", wire1);
+    println!("Wire 2: {:?}", wire2);
 
-    //let intersection_points = intersection_points_between(wire1, wire2);
+    let intersection_points = intersection_points_between(&wire1, &wire2);
+
+    println!("Intersection points: {:?}", intersection_points);
 
     0
+}
+
+fn intersection_points_between(wire1: &Wire, wire2: &Wire) -> Vec<Point> {
+    vec![]
 }
 
 fn wire_from_directions(wire_directions: &WireDirections) -> Wire {
