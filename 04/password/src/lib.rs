@@ -7,8 +7,9 @@ pub fn total_possible_passwords(range_start: u32, range_end: u32) -> u32 {
     let mut total = 0;
 
     for guess in range_start..=range_end {
-        let mut any_pair = false;
+        let mut pair_lengths = vec![];
         let mut low_digit = false;
+        let mut pair_count = 0;
 
         for place in 0..5 {
             let right = digit_at_place(guess, place);
@@ -20,11 +21,30 @@ pub fn total_possible_passwords(range_start: u32, range_end: u32) -> u32 {
             }
 
             if right == left {
-                any_pair = true;
+                pair_count += 1;
+            } else {
+                if pair_count > 0 {
+                    pair_lengths.push(pair_count + 1);
+                }
+                pair_count = 0;
             }
         }
 
-        if low_digit || !any_pair {
+        if pair_count > 0 {
+            pair_lengths.push(pair_count + 1);
+        }
+
+        if low_digit {
+            continue;
+        }
+
+        if pair_lengths.len() == 0 {
+            continue;
+        }
+
+        let any_single_pair = pair_lengths.iter().any(|pl| *pl == 2);
+
+        if !any_single_pair {
             continue;
         }
 
@@ -68,5 +88,20 @@ pub mod tests {
     #[test]
     fn digit_at_place_5() {
         assert_eq!(digit_at_place(GUESS, 5), 1);
+    }
+
+    #[test]
+    fn total_possible_passwords_0() {
+        assert_eq!(total_possible_passwords(112233, 112233), 1);
+    }
+
+    #[test]
+    fn total_possible_passwords_1() {
+        assert_eq!(total_possible_passwords(123444, 123444), 0);
+    }
+
+    #[test]
+    fn total_possible_passwords_2() {
+        assert_eq!(total_possible_passwords(111122, 111122), 1);
     }
 }
