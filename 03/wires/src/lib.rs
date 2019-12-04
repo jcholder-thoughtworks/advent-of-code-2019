@@ -2,6 +2,8 @@ use std::convert::From;
 
 type Distance = i32;
 
+type Length = Distance;
+
 #[derive(Clone,Copy,Debug)]
 struct Point {
     x: i32,
@@ -66,7 +68,59 @@ impl Wire {
     }
 
     pub fn shortest_circuit_distance_with(&self, wire2: &Wire) -> Distance {
-        0
+        let wire1 = self;
+
+        let mut distances = vec![];
+
+        for (index1, segment1) in wire1.segments.iter().enumerate() {
+            // Skip the intersection at the origin
+            if index1 == 0 {
+                continue;
+            }
+
+            for (index2, segment2) in wire2.segments.iter().enumerate() {
+                if !segment1.intersects(&segment2) {
+                    continue;
+                }
+
+                let mut sequence1_length: Length = 0;
+                let mut sequence2_length: Length = 0;
+
+                for segment in wire1.segments.iter().take(index1) {
+                    sequence1_length += segment.length;
+                }
+
+                for segment in wire2.segments.iter().take(index2) {
+                    sequence2_length += segment.length;
+                }
+
+                let last_segment1 = &wire1.segments[index1];
+                let last_segment2 = &wire2.segments[index2];
+
+                // TODO: Seems like too many abs()
+                if last_segment1.start.x == last_segment1.end.x { // vertical segment
+                    let start = last_segment2.start.x.abs();
+                    let intersect = last_segment1.start.x.abs();
+                    sequence2_length += (intersect - start).abs();
+
+                    let start = last_segment1.start.y.abs();
+                    let intersect = last_segment2.start.y.abs();
+                    sequence1_length += (intersect - start).abs();
+                } else { // horizontal segment
+                    let start = last_segment2.start.y.abs();
+                    let intersect = last_segment1.start.y.abs();
+                    sequence2_length += (intersect - start).abs();
+
+                    let start = last_segment1.start.x.abs();
+                    let intersect = last_segment2.start.x.abs();
+                    sequence1_length += (intersect - start).abs();
+                }
+
+                distances.push(sequence1_length + sequence2_length);
+            }
+        }
+
+        *distances.iter().min_by(|a, b| a.cmp(b)).unwrap()
     }
 }
 
@@ -203,16 +257,14 @@ pub mod tests {
         use super::*;
 
         #[test]
-        #[ignore]
         fn example1() {
-            let wire1 = Wire::from("R8,U5,L5,D");
+            let wire1 = Wire::from("R8,U5,L5,D3");
             let wire2 = Wire::from("U7,R6,D4,L4");
 
-            assert_eq!(wire1.shortest_circuit_distance_with(&wire2), 40);
+            assert_eq!(wire1.shortest_circuit_distance_with(&wire2), 30);
         }
 
         #[test]
-        #[ignore]
         fn example2() {
             let wire1 = Wire::from("R75,D30,R83,U83,L12,D49,R71,U7,L72");
             let wire2 = Wire::from("U62,R66,U55,R34,D71,R55,D58,R83");
@@ -221,7 +273,6 @@ pub mod tests {
         }
 
         #[test]
-        #[ignore]
         fn example3() {
             let wire1 = Wire::from("R98,U47,R26,D63,R33,U87,L62,D20,R33,U53,R51");
             let wire2 = Wire::from("U98,R91,D20,R16,D67,R40,U7,R15,U6,R7");
