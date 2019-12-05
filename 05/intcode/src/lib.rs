@@ -9,8 +9,10 @@ pub const OUTPUT: Pointer = 0;
 pub const NOUN: Pointer = 1;
 pub const VERB: Pointer = 2;
 
+#[derive(Debug)]
 pub struct Program {
-    intcode: Intcode
+    intcode: Intcode,
+    output: Output,
 }
 
 impl From<&str> for Program {
@@ -23,27 +25,30 @@ impl From<&str> for Program {
 
 impl Program {
     pub fn new(intcode: Intcode) -> Self {
-        Self { intcode }
+        Self {
+            intcode,
+            output: 0,
+        }
     }
 
     pub fn execute(&mut self, input: Input) -> Output {
-        self.execute_at_pointer(0, input)
+        self.execute_at_pointer(0, input);
+
+        self.output
     }
 
-    fn execute_at_pointer(&mut self, pointer: Pointer, input: Input) -> Output {
-        let mut output: Output = 0;
-
+    fn execute_at_pointer(&mut self, pointer: Pointer, input: Input) {
         let command = self.intcode[pointer];
 
         if command == 99 {
-            return 0;
+            return;
         }
 
         let new_pointer = match command {
             1 => self.perform_add_at(pointer),
             2 => self.perform_multiply_at(pointer),
             3 => self.store_input(input, pointer),
-            4 => self.fetch_output(&mut output, pointer),
+            4 => self.fetch_output(pointer),
             _ => panic!("Unrecognized command: {:?}", command),
         };
 
@@ -51,13 +56,17 @@ impl Program {
     }
 
     fn store_input(&mut self, input: Input, pointer: Pointer) -> Pointer {
-        // null op until implemented
+        let store_at = self.intcode[pointer + 1] as usize;
+
+        self.intcode[store_at] = input;
 
         pointer + 2
     }
 
-    fn fetch_output(&self, output: &mut Output, pointer: Pointer) -> Pointer {
-        // null op until implemented
+    fn fetch_output(&mut self, pointer: Pointer) -> Pointer {
+        let fetch_from = self.intcode[pointer + 1] as usize;
+
+        self.output = self.intcode[fetch_from];
 
         pointer + 2
     }
