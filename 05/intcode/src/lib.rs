@@ -66,6 +66,17 @@ impl From<Instruction> for Command {
     }
 }
 
+impl Command {
+    fn execute_against(&self, program: &mut Program, pointer: Pointer, input: Input) -> Pointer {
+        match self.instruction_type {
+            IT::Add => program.perform_add_at(pointer),
+            IT::Multiply => program.perform_multiply_at(pointer),
+            IT::StoreInput => program.store_input(input, pointer),
+            IT::FetchOutput => program.fetch_output(pointer),
+        }
+    }
+}
+
 #[derive(Debug)]
 pub struct Program {
     intcode: Intcode,
@@ -138,12 +149,7 @@ impl Program {
 
         let command = Command::from(instruction);
 
-        let new_pointer = match command.instruction_type {
-            IT::Add => self.perform_add_at(pointer),
-            IT::Multiply => self.perform_multiply_at(pointer),
-            IT::StoreInput => self.store_input(input, pointer),
-            IT::FetchOutput => self.fetch_output(pointer),
-        };
+        let new_pointer = command.execute_against(self, pointer, input);
 
         self.execute_at_pointer(new_pointer, input)
     }
