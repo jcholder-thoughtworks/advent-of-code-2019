@@ -16,7 +16,7 @@ type IT = InstructionType;
 struct Command {
     instruction: Instruction,
     instruction_type: InstructionType,
-    parameters: Vec<Parameter>,
+    parameter_modes: Vec<ParameterMode>,
 }
 
 type Intcode = Vec<Instruction>;
@@ -42,10 +42,14 @@ enum ParameterMode {
     Immediate,
 }
 
-#[derive(Debug)]
-struct Parameter {
-    mode: ParameterMode,
-    value: i32,
+impl From<i32> for ParameterMode {
+    fn from(opcode_digit: i32) -> Self {
+        match opcode_digit {
+            0 => ParameterMode::Position,
+            1 => ParameterMode::Immediate,
+            _ => panic!("Unrecognized parameter mode code: {}", opcode_digit),
+        }
+    }
 }
 
 impl From<Instruction> for Command {
@@ -58,10 +62,23 @@ impl From<Instruction> for Command {
             _ => panic!("Unrecognized instruction {:?}", instruction),
         };
 
+        let parameter_modes = match instruction_type {
+            IT::Add => { vec![
+                ParameterMode::from(digit_at_place(instruction, 2)),
+                ParameterMode::from(digit_at_place(instruction, 3)),
+            ] },
+            IT::Multiply => { vec![
+                ParameterMode::from(digit_at_place(instruction, 2)),
+                ParameterMode::from(digit_at_place(instruction, 3)),
+            ] },
+            IT::StoreInput => vec![ParameterMode::from(digit_at_place(instruction, 2))],
+            IT::FetchOutput => vec![ParameterMode::from(digit_at_place(instruction, 2))],
+        };
+
         Self {
             instruction_type,
             instruction,
-            parameters: vec![],
+            parameter_modes,
         }
     }
 }
