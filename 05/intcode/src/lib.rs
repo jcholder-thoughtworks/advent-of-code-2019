@@ -9,6 +9,16 @@ pub const OUTPUT: Pointer = 0;
 pub const NOUN: Pointer = 1;
 pub const VERB: Pointer = 2;
 
+enum ParameterMode {
+    Position,
+    Immediate,
+}
+
+struct Parameter {
+    mode: ParameterMode,
+    value: i32,
+}
+
 #[derive(Debug)]
 pub struct Program {
     intcode: Intcode,
