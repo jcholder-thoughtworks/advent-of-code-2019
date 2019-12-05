@@ -69,11 +69,57 @@ impl From<Instruction> for Command {
 impl Command {
     fn execute_against(&self, program: &mut Program, pointer: Pointer, input: Input) -> Pointer {
         match self.instruction_type {
-            IT::Add => program.perform_add_at(pointer),
-            IT::Multiply => program.perform_multiply_at(pointer),
-            IT::StoreInput => program.store_input(input, pointer),
-            IT::FetchOutput => program.fetch_output(pointer),
+            IT::Add => self.addition(program, pointer),
+            IT::Multiply => self.multiplication(program, pointer),
+            IT::StoreInput => self.store_input(program, input, pointer),
+            IT::FetchOutput => self.fetch_output(program, pointer),
         }
+    }
+
+    fn addition(&self, program: &mut Program, pointer: Pointer) -> Pointer {
+        let left_index = program.intcode[pointer + 1] as usize;
+        let right_index = program.intcode[pointer + 2] as usize;
+        let destination = program.intcode[pointer + 3] as usize;
+
+        let left_value = program.intcode[left_index];
+        let right_value = program.intcode[right_index];
+
+        let new_value = left_value + right_value;
+
+        program.intcode[destination] = new_value;
+
+        pointer + 4
+    }
+
+    fn multiplication(&self, program: &mut Program, pointer: Pointer) -> Pointer {
+        let left_index = program.intcode[pointer + 1] as usize;
+        let right_index = program.intcode[pointer + 2] as usize;
+        let destination = program.intcode[pointer + 3] as usize;
+
+        let left_value = program.intcode[left_index];
+        let right_value = program.intcode[right_index];
+
+        let new_value = left_value * right_value;
+
+        program.intcode[destination] = new_value;
+
+        pointer + 4
+    }
+
+    fn store_input(&self, program: &mut Program, input: Input, pointer: Pointer) -> Pointer {
+        let store_at = program.intcode[pointer + 1] as usize;
+
+        program.intcode[store_at] = input;
+
+        pointer + 2
+    }
+
+    fn fetch_output(&self, program: &mut Program, pointer: Pointer) -> Pointer {
+        let fetch_from = program.intcode[pointer + 1] as usize;
+
+        program.output = program.intcode[fetch_from];
+
+        pointer + 2
     }
 }
 
@@ -122,52 +168,6 @@ impl Program {
         let new_pointer = command.execute_against(self, pointer, input);
 
         self.execute_at_pointer(new_pointer, input)
-    }
-
-    fn store_input(&mut self, input: Input, pointer: Pointer) -> Pointer {
-        let store_at = self.intcode[pointer + 1] as usize;
-
-        self.intcode[store_at] = input;
-
-        pointer + 2
-    }
-
-    fn fetch_output(&mut self, pointer: Pointer) -> Pointer {
-        let fetch_from = self.intcode[pointer + 1] as usize;
-
-        self.output = self.intcode[fetch_from];
-
-        pointer + 2
-    }
-
-    fn perform_add_at(&mut self, pointer: Pointer) -> Pointer {
-        let left_index = self.intcode[pointer + 1] as usize;
-        let right_index = self.intcode[pointer + 2] as usize;
-        let destination = self.intcode[pointer + 3] as usize;
-
-        let left_value = self.intcode[left_index];
-        let right_value = self.intcode[right_index];
-
-        let new_value = left_value + right_value;
-
-        self.intcode[destination] = new_value;
-
-        pointer + 4
-    }
-
-    fn perform_multiply_at(&mut self, pointer: Pointer) -> Pointer {
-        let left_index = self.intcode[pointer + 1] as usize;
-        let right_index = self.intcode[pointer + 2] as usize;
-        let destination = self.intcode[pointer + 3] as usize;
-
-        let left_value = self.intcode[left_index];
-        let right_value = self.intcode[right_index];
-
-        let new_value = left_value * right_value;
-
-        self.intcode[destination] = new_value;
-
-        pointer + 4
     }
 }
 
