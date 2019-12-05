@@ -22,28 +22,24 @@ impl Program {
     }
 
     pub fn execute(&mut self, input: Input) -> Output {
-        let (executed_intcode, output) = execute_intcode_at_pointer(self.intcode.to_vec(), 0, input);
-
-        self.intcode = executed_intcode;
-
-        output
-    }
-}
-
-fn execute_intcode_at_pointer(mut intcode: Intcode, pointer: Pointer, input: Input) -> (Intcode, Output) {
-    let command = intcode[pointer];
-
-    if command == 99 {
-        return (intcode, 0);
+        self.execute_at_pointer(0, input)
     }
 
-    match command {
-        1 => perform_add(&mut intcode, pointer),
-        2 => perform_multiply(&mut intcode, pointer),
-        _ => panic!("Unrecognized command: {:?}", command),
-    };
+    fn execute_at_pointer(&mut self, pointer: Pointer, input: Input) -> Output {
+        let command = self.intcode[pointer];
 
-    execute_intcode_at_pointer(intcode, pointer + 4, input)
+        if command == 99 {
+            return 0;
+        }
+
+        match command {
+            1 => perform_add(&mut self.intcode, pointer),
+            2 => perform_multiply(&mut self.intcode, pointer),
+            _ => panic!("Unrecognized command: {:?}", command),
+        };
+
+        self.execute_at_pointer(pointer + 4, input)
+    }
 }
 
 fn perform_add(intcode: &mut Intcode, pointer: Pointer) {
