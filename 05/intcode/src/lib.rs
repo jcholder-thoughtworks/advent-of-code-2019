@@ -49,18 +49,18 @@ impl Program {
     }
 
     fn execute_at_pointer(&mut self, pointer: Pointer, input: Input) {
-        let command = self.intcode[pointer];
+        let instruction = self.intcode[pointer];
 
-        if command == 99 {
+        if instruction == 99 {
             return;
         }
 
-        let new_pointer = match command {
+        let new_pointer = match instruction {
             1 => self.perform_add_at(pointer),
             2 => self.perform_multiply_at(pointer),
             3 => self.store_input(input, pointer),
             4 => self.fetch_output(pointer),
-            _ => panic!("Unrecognized command: {:?}", command),
+            _ => panic!("Unrecognized instruction: {:?}", instruction),
         };
 
         self.execute_at_pointer(new_pointer, input)
