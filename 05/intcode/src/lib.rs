@@ -22,7 +22,11 @@ impl Program {
     }
 
     pub fn execute(&mut self, input: Input) -> Output {
-        0
+        let (executed_intcode, output) = execute_intcode(self.intcode.to_vec(), input);
+
+        self.intcode = executed_intcode;
+
+        output
     }
 }
 
@@ -80,69 +84,58 @@ pub mod tests {
     const DEFAULT_INPUT: Input = 0;
 
     #[test]
-    fn minimal_intcode() {
-        let intcode = vec![1, 0, 0, 0, 99];
-
-        let expected = vec![2, 0, 0, 0, 99];
-
-        let (executed_intcode, _output) = execute_intcode(intcode, DEFAULT_INPUT);
-
-        assert_eq!(expected, executed_intcode);
-    }
-
-    #[test]
     fn example_intcode() {
-        let intcode = vec![1, 9, 10, 3, 2, 3, 11, 0, 99, 30, 40, 50];
+        let mut program = Program::new(vec![1, 9, 10, 3, 2, 3, 11, 0, 99, 30, 40, 50]);
 
         let expected = vec![3500, 9, 10, 70, 2, 3, 11, 0, 99, 30, 40, 50];
 
-        let (executed_intcode, _output) = execute_intcode(intcode, DEFAULT_INPUT);
+        program.execute(DEFAULT_INPUT);
 
-        assert_eq!(expected, executed_intcode);
+        assert_eq!(expected, program.intcode);
     }
 
     #[test]
-    fn small_intcode_1() {
-        let intcode = vec![1,0,0,0,99];
+    fn addition() {
+        let mut program = Program::new(vec![1,0,0,0,99]);
 
         let expected = vec![2,0,0,0,99];
 
-        let (executed_intcode, _output) = execute_intcode(intcode, DEFAULT_INPUT);
+        program.execute(DEFAULT_INPUT);
 
-        assert_eq!(expected, executed_intcode);
+        assert_eq!(expected, program.intcode);
     }
 
     #[test]
-    fn small_intcode_2() {
-        let intcode = vec![2,3,0,3,99];
+    fn multiplication() {
+        let mut program = Program::new(vec![2,3,0,3,99]);
 
         let expected = vec![2,3,0,6,99];
 
-        let (executed_intcode, _output) = execute_intcode(intcode, DEFAULT_INPUT);
+        program.execute(DEFAULT_INPUT);
 
-        assert_eq!(expected, executed_intcode);
+        assert_eq!(expected, program.intcode);
     }
 
     #[test]
-    fn small_intcode_3() {
-        let intcode = vec![2,4,4,5,99,0];
+    fn multiplication_and_storage() {
+        let mut program = Program::new(vec![2,4,4,5,99,0]);
 
         let expected = vec![2,4,4,5,99,9801];
 
-        let (executed_intcode, _output) = execute_intcode(intcode, DEFAULT_INPUT);
+        program.execute(DEFAULT_INPUT);
 
-        assert_eq!(expected, executed_intcode);
+        assert_eq!(expected, program.intcode);
     }
 
     #[test]
-    fn small_intcode_4() {
-        let intcode = vec![1,1,1,4,99,5,6,0,99];
+    fn multiple_instructions() {
+        let mut program = Program::new(vec![1,1,1,4,99,5,6,0,99]);
 
         let expected = vec![30,1,1,4,2,5,6,0,99];
 
-        let (executed_intcode, _output) = execute_intcode(intcode, DEFAULT_INPUT);
+        program.execute(DEFAULT_INPUT);
 
-        assert_eq!(expected, executed_intcode);
+        assert_eq!(expected, program.intcode);
     }
 
     #[test]
