@@ -1,8 +1,26 @@
 use std::convert::From;
 
 type Instruction = i32;
+
+#[derive(Debug)]
+enum InstructionType {
+    Add,
+    Multiply,
+    StoreInput,
+    FetchOutput,
+}
+
+#[derive(Debug)]
+struct Command {
+    instruction_type: InstructionType,
+    parameters: Vec<Parameter>,
+    raw_value: Instruction,
+}
+
 type Intcode = Vec<Instruction>;
+
 type Pointer = usize;
+
 pub type Input = i32;
 pub type Output = i32;
 
@@ -11,15 +29,17 @@ pub const NOUN: Pointer = 1;
 pub const VERB: Pointer = 2;
 
 const ADD: Instruction = 1;
-const MULTIPLY: Instruction  = 2;
-const STORE_INPUT: Instruction  = 3;
-const FETCH_OUTPUT: Instruction  = 4;
+const MULTIPLY: Instruction = 2;
+const STORE_INPUT: Instruction = 3;
+const FETCH_OUTPUT: Instruction = 4;
 
+#[derive(Debug)]
 enum ParameterMode {
     Position,
     Immediate,
 }
 
+#[derive(Debug)]
 struct Parameter {
     mode: ParameterMode,
     value: i32,
