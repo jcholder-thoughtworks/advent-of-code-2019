@@ -33,39 +33,39 @@ impl Program {
         }
 
         match command {
-            1 => perform_add(&mut self.intcode, pointer),
-            2 => perform_multiply(&mut self.intcode, pointer),
+            1 => self.perform_add_at(pointer),
+            2 => self.perform_multiply_at(pointer),
             _ => panic!("Unrecognized command: {:?}", command),
         };
 
         self.execute_at_pointer(pointer + 4, input)
     }
-}
 
-fn perform_add(intcode: &mut Intcode, pointer: Pointer) {
-    let left_index = intcode[pointer + 1] as usize;
-    let right_index = intcode[pointer + 2] as usize;
-    let destination = intcode[pointer + 3] as usize;
+    fn perform_add_at(&mut self, pointer: Pointer) {
+        let left_index = self.intcode[pointer + 1] as usize;
+        let right_index = self.intcode[pointer + 2] as usize;
+        let destination = self.intcode[pointer + 3] as usize;
 
-    let left_value = intcode[left_index];
-    let right_value = intcode[right_index];
+        let left_value = self.intcode[left_index];
+        let right_value = self.intcode[right_index];
 
-    let new_value = left_value + right_value;
+        let new_value = left_value + right_value;
 
-    intcode[destination] = new_value;
-}
+        self.intcode[destination] = new_value;
+    }
 
-fn perform_multiply(intcode: &mut Intcode, pointer: Pointer) {
-    let left_index = intcode[pointer + 1] as usize;
-    let right_index = intcode[pointer + 2] as usize;
-    let destination = intcode[pointer + 3] as usize;
+    fn perform_multiply_at(&mut self, pointer: Pointer) {
+        let left_index = self.intcode[pointer + 1] as usize;
+        let right_index = self.intcode[pointer + 2] as usize;
+        let destination = self.intcode[pointer + 3] as usize;
 
-    let left_value = intcode[left_index];
-    let right_value = intcode[right_index];
+        let left_value = self.intcode[left_index];
+        let right_value = self.intcode[right_index];
 
-    let new_value = left_value * right_value;
+        let new_value = left_value * right_value;
 
-    intcode[destination] = new_value;
+        self.intcode[destination] = new_value;
+    }
 }
 
 
