@@ -1,5 +1,6 @@
 use std::convert::From;
 
+type Instruction = i32;
 type Intcode = Vec<i32>;
 type Pointer = usize;
 pub type Input = i32;
