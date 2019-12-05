@@ -7,7 +7,7 @@ fn main() -> io::Result<()> {
     let code = fs::read_to_string("input.txt")?;
     let mut program = Program::from(code.as_str());
 
-    let input = 0; // example input
+    let input = 1; // run air conditioning diagnostics
 
     println!("Input: {}", input);
 
