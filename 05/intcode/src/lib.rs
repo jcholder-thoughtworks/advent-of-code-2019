@@ -22,16 +22,12 @@ impl Program {
     }
 
     pub fn execute(&mut self, input: Input) -> Output {
-        let (executed_intcode, output) = execute_intcode(self.intcode.to_vec(), input);
+        let (executed_intcode, output) = execute_intcode_at_pointer(self.intcode.to_vec(), 0, input);
 
         self.intcode = executed_intcode;
 
         output
     }
-}
-
-pub fn execute_intcode(intcode: Intcode, input: Input) -> (Intcode, Output) {
-    execute_intcode_at_pointer(intcode, 0, input)
 }
 
 fn execute_intcode_at_pointer(mut intcode: Intcode, pointer: Pointer, input: Input) -> (Intcode, Output) {
@@ -141,11 +137,11 @@ pub mod tests {
     #[test]
     #[ignore]
     fn basic_input_output() {
-        let intcode = vec![3,0,4,0,99];
+        let mut program = Program::new(vec![3,0,4,0,99]);
 
         let input = 5;
 
-        let (_, output) = execute_intcode(intcode, input);
+        let output = program.execute(input);
 
         assert_eq!(input, output);
     }
