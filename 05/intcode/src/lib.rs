@@ -48,6 +48,24 @@ struct Parameter {
     value: i32,
 }
 
+impl From<Instruction> for Command {
+    fn from(instruction: Instruction) -> Self {
+        let instruction_type = match digit_at_place(instruction, 0) {
+            ADD => IT::Add,
+            MULTIPLY => IT::Multiply,
+            STORE_INPUT => IT::StoreInput,
+            FETCH_OUTPUT => IT::FetchOutput,
+            _ => panic!("Unrecognized instruction {:?}", instruction),
+        };
+
+        Self {
+            instruction_type,
+            instruction,
+            parameters: vec![],
+        }
+    }
+}
+
 #[derive(Debug)]
 pub struct Program {
     intcode: Intcode,
@@ -118,19 +136,7 @@ impl Program {
             return;
         }
 
-        let instruction_type = match digit_at_place(instruction, 0) {
-            ADD => IT::Add,
-            MULTIPLY => IT::Multiply,
-            STORE_INPUT => IT::StoreInput,
-            FETCH_OUTPUT => IT::FetchOutput,
-            _ => panic!("Unrecognized instruction {:?}", instruction),
-        };
-
-        let command = Command {
-            instruction_type,
-            instruction,
-            parameters: vec![],
-        };
+        let command = Command::from(instruction);
 
         let new_pointer = match command.instruction_type {
             IT::Add => self.perform_add_at(pointer),
