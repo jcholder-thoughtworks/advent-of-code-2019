@@ -10,11 +10,13 @@ enum InstructionType {
     FetchOutput,
 }
 
+type IT = InstructionType;
+
 #[derive(Debug)]
 struct Command {
+    instruction: Instruction,
     instruction_type: InstructionType,
     parameters: Vec<Parameter>,
-    raw_value: Instruction,
 }
 
 type Intcode = Vec<Instruction>;
@@ -32,6 +34,7 @@ const ADD: Instruction = 1;
 const MULTIPLY: Instruction = 2;
 const STORE_INPUT: Instruction = 3;
 const FETCH_OUTPUT: Instruction = 4;
+const HALT: Instruction = 99;
 
 #[derive(Debug)]
 enum ParameterMode {
@@ -110,18 +113,30 @@ impl Program {
 
     fn execute_at_pointer(&mut self, pointer: Pointer, input: Input) {
         let instruction = self.intcode[pointer];
-        //let parameters = parameters_for(instruction, raw_value);
 
-        if instruction == 99 {
+        if instruction == HALT {
             return;
         }
 
-        let new_pointer = match instruction {
-            ADD => self.perform_add_at(pointer),
-            MULTIPLY => self.perform_multiply_at(pointer),
-            STORE_INPUT => self.store_input(input, pointer),
-            FETCH_OUTPUT => self.fetch_output(pointer),
-            _ => panic!("Unrecognized instruction: {:?}", instruction),
+        let instruction_type = match digit_at_place(instruction, 0) {
+            ADD => IT::Add,
+            MULTIPLY => IT::Multiply,
+            STORE_INPUT => IT::StoreInput,
+            FETCH_OUTPUT => IT::FetchOutput,
+            _ => panic!("Unrecognized instruction {:?}", instruction),
+        };
+
+        let command = Command {
+            instruction_type,
+            instruction,
+            parameters: vec![],
+        };
+
+        let new_pointer = match command.instruction_type {
+            IT::Add => self.perform_add_at(pointer),
+            IT::Multiply => self.perform_multiply_at(pointer),
+            IT::StoreInput => self.store_input(input, pointer),
+            IT::FetchOutput => self.fetch_output(pointer),
         };
 
         self.execute_at_pointer(new_pointer, input)
