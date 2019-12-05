@@ -112,4 +112,15 @@ pub mod tests {
 
         assert_eq!(expected, executed_program);
     }
+
+    #[test]
+    fn basic_input_output() {
+        let program = vec![3,0,4,0,99];
+
+        let input = 5;
+
+        let (_, output) = execute_intcode(program, input);
+
+        assert_eq!(input, output);
+    }
 }
