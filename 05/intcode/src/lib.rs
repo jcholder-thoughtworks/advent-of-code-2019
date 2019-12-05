@@ -122,12 +122,23 @@ impl Command {
     }
 
     fn multiplication(&self, program: &mut Program, pointer: Pointer) -> Pointer {
-        let left_index = program.intcode[pointer + 1] as usize;
-        let right_index = program.intcode[pointer + 2] as usize;
         let destination = program.intcode[pointer + 3] as usize;
 
-        let left_value = program.intcode[left_index];
-        let right_value = program.intcode[right_index];
+        let left_value = match self.parameter_modes[0] {
+            PM::Position => {
+                let left_index = program.intcode[pointer + 1] as usize;
+                program.intcode[left_index]
+            },
+            PM::Immediate => program.intcode[pointer + 1],
+        };
+
+        let right_value = match self.parameter_modes[1] {
+            PM::Position => {
+                let right_index = program.intcode[pointer + 2] as usize;
+                program.intcode[right_index]
+            },
+            PM::Immediate => program.intcode[pointer + 2],
+        };
 
         let new_value = left_value * right_value;
 
