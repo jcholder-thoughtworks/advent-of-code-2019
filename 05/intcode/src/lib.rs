@@ -1,5 +1,7 @@
 pub type IntcodeProgram = Vec<i32>;
 pub type Pointer = usize;
+pub type Input = i32;
+pub type Output = i32;
 
 pub const OUTPUT: Pointer = 0;
 pub const NOUN: Pointer = 1;
@@ -10,15 +12,15 @@ pub fn parse_code(code: String) -> IntcodeProgram {
     program.map(|c| c.parse().unwrap()).collect()
 }
 
-pub fn execute_intcode(program: IntcodeProgram) -> IntcodeProgram {
-    execute_intcode_at_pointer(program, 0)
+pub fn execute_intcode(program: IntcodeProgram, input: Input) -> (IntcodeProgram, Output) {
+    execute_intcode_at_pointer(program, 0, input)
 }
 
-fn execute_intcode_at_pointer(mut program: IntcodeProgram, pointer: Pointer) -> IntcodeProgram {
+fn execute_intcode_at_pointer(mut program: IntcodeProgram, pointer: Pointer, input: Input) -> (IntcodeProgram, Output) {
     let command = program[pointer];
 
     if command == 99 {
-        return program;
+        return (program, 0);
     }
 
     let left_index = program[pointer + 1] as usize;
@@ -36,12 +38,14 @@ fn execute_intcode_at_pointer(mut program: IntcodeProgram, pointer: Pointer) -> 
 
     program[destination] = new_value;
 
-    execute_intcode_at_pointer(program, pointer + 4)
+    execute_intcode_at_pointer(program, pointer + 4, input)
 }
 
 #[cfg(test)]
 pub mod tests {
     use super::*;
+
+    const DEFAULT_INPUT: Input = 0;
 
     #[test]
     fn minimal_program() {
@@ -49,7 +53,9 @@ pub mod tests {
 
         let expected = vec![2, 0, 0, 0, 99];
 
-        assert_eq!(expected, execute_intcode(program));
+        let (executed_program, _output) = execute_intcode(program, DEFAULT_INPUT);
+
+        assert_eq!(expected, executed_program);
     }
 
     #[test]
@@ -58,7 +64,9 @@ pub mod tests {
 
         let expected = vec![3500, 9, 10, 70, 2, 3, 11, 0, 99, 30, 40, 50];
 
-        assert_eq!(expected, execute_intcode(program));
+        let (executed_program, _output) = execute_intcode(program, DEFAULT_INPUT);
+
+        assert_eq!(expected, executed_program);
     }
 
     #[test]
@@ -67,7 +75,9 @@ pub mod tests {
 
         let expected = vec![2,0,0,0,99];
 
-        assert_eq!(expected, execute_intcode(program));
+        let (executed_program, _output) = execute_intcode(program, DEFAULT_INPUT);
+
+        assert_eq!(expected, executed_program);
     }
 
     #[test]
@@ -76,7 +86,9 @@ pub mod tests {
 
         let expected = vec![2,3,0,6,99];
 
-        assert_eq!(expected, execute_intcode(program));
+        let (executed_program, _output) = execute_intcode(program, DEFAULT_INPUT);
+
+        assert_eq!(expected, executed_program);
     }
 
     #[test]
@@ -85,7 +97,9 @@ pub mod tests {
 
         let expected = vec![2,4,4,5,99,9801];
 
-        assert_eq!(expected, execute_intcode(program));
+        let (executed_program, _output) = execute_intcode(program, DEFAULT_INPUT);
+
+        assert_eq!(expected, executed_program);
     }
 
     #[test]
@@ -94,6 +108,8 @@ pub mod tests {
 
         let expected = vec![30,1,1,4,2,5,6,0,99];
 
-        assert_eq!(expected, execute_intcode(program));
+        let (executed_program, _output) = execute_intcode(program, DEFAULT_INPUT);
+
+        assert_eq!(expected, executed_program);
     }
 }
