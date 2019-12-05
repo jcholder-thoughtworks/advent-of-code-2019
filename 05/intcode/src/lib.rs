@@ -205,4 +205,10 @@ pub mod tests {
         assert_eq!(digit_at_place(12345, 3), 2);
         assert_eq!(digit_at_place(12345, 4), 1);
     }
+
+    #[test]
+    fn default_to_zero_beyond_last_place() {
+        assert_eq!(digit_at_place(12345, 5), 0);
+        assert_eq!(digit_at_place(12345, 9), 0);
+    }
 }
