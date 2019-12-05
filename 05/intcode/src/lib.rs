@@ -37,16 +37,16 @@ impl Program {
             return 0;
         }
 
-        match command {
+        let new_pointer = match command {
             1 => self.perform_add_at(pointer),
             2 => self.perform_multiply_at(pointer),
             _ => panic!("Unrecognized command: {:?}", command),
         };
 
-        self.execute_at_pointer(pointer + 4, input)
+        self.execute_at_pointer(new_pointer, input)
     }
 
-    fn perform_add_at(&mut self, pointer: Pointer) {
+    fn perform_add_at(&mut self, pointer: Pointer) -> Pointer {
         let left_index = self.intcode[pointer + 1] as usize;
         let right_index = self.intcode[pointer + 2] as usize;
         let destination = self.intcode[pointer + 3] as usize;
@@ -57,9 +57,11 @@ impl Program {
         let new_value = left_value + right_value;
 
         self.intcode[destination] = new_value;
+
+        pointer + 4
     }
 
-    fn perform_multiply_at(&mut self, pointer: Pointer) {
+    fn perform_multiply_at(&mut self, pointer: Pointer) -> Pointer {
         let left_index = self.intcode[pointer + 1] as usize;
         let right_index = self.intcode[pointer + 2] as usize;
         let destination = self.intcode[pointer + 3] as usize;
@@ -70,6 +72,8 @@ impl Program {
         let new_value = left_value * right_value;
 
         self.intcode[destination] = new_value;
+
+        pointer + 4
     }
 }
 
