@@ -1,7 +1,7 @@
 use std::convert::From;
 
-pub type Intcode = Vec<i32>;
-pub type Pointer = usize;
+type Intcode = Vec<i32>;
+type Pointer = usize;
 pub type Input = i32;
 pub type Output = i32;
 
