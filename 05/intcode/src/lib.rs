@@ -125,7 +125,6 @@ impl Program {
     }
 }
 
-
 #[cfg(test)]
 pub mod tests {
     use super::*;
@@ -196,5 +195,14 @@ pub mod tests {
         let output = program.execute(input);
 
         assert_eq!(input, output);
+    }
+
+    #[test]
+    fn digit_at_place_basic() {
+        assert_eq!(digit_at_place(12345, 0), 5);
+        assert_eq!(digit_at_place(12345, 1), 4);
+        assert_eq!(digit_at_place(12345, 2), 3);
+        assert_eq!(digit_at_place(12345, 3), 2);
+        assert_eq!(digit_at_place(12345, 4), 1);
     }
 }
