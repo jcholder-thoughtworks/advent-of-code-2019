@@ -23,6 +23,16 @@ fn execute_intcode_at_pointer(mut program: IntcodeProgram, pointer: Pointer, inp
         return (program, 0);
     }
 
+    match command {
+        1 => perform_add(&mut program, pointer),
+        2 => perform_multiply(&mut program, pointer),
+        _ => panic!("Unrecognized command: {:?}", command),
+    };
+
+    execute_intcode_at_pointer(program, pointer + 4, input)
+}
+
+fn perform_add(program: &mut IntcodeProgram, pointer: Pointer) {
     let left_index = program[pointer + 1] as usize;
     let right_index = program[pointer + 2] as usize;
     let destination = program[pointer + 3] as usize;
@@ -30,16 +40,24 @@ fn execute_intcode_at_pointer(mut program: IntcodeProgram, pointer: Pointer, inp
     let left_value = program[left_index];
     let right_value = program[right_index];
 
-    let new_value = match command {
-        1 => left_value + right_value,
-        2 => left_value * right_value,
-        _ => panic!("Unrecognized command: {:?}", command),
-    };
+    let new_value = left_value + right_value;
 
     program[destination] = new_value;
-
-    execute_intcode_at_pointer(program, pointer + 4, input)
 }
+
+fn perform_multiply(program: &mut IntcodeProgram, pointer: Pointer) {
+    let left_index = program[pointer + 1] as usize;
+    let right_index = program[pointer + 2] as usize;
+    let destination = program[pointer + 3] as usize;
+
+    let left_value = program[left_index];
+    let right_value = program[right_index];
+
+    let new_value = left_value * right_value;
+
+    program[destination] = new_value;
+}
+
 
 #[cfg(test)]
 pub mod tests {
@@ -114,6 +132,7 @@ pub mod tests {
     }
 
     #[test]
+    #[ignore]
     fn basic_input_output() {
         let program = vec![3,0,4,0,99];
 
