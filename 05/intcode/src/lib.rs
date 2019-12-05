@@ -261,6 +261,18 @@ pub mod tests {
     }
 
     #[test]
+    fn parameter_types_addition() {
+        let mut program = Program::new(vec![1101,3,4,5,99,0]);
+
+        let expected = vec![1101,3,4,5,99,7];
+
+        program.execute(DEFAULT_INPUT);
+
+        assert_eq!(expected, program.intcode);
+    }
+
+
+    #[test]
     fn digit_at_place_basic() {
         assert_eq!(digit_at_place(12345, 0), 5);
         assert_eq!(digit_at_place(12345, 1), 4);
