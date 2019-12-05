@@ -26,6 +26,17 @@ pub struct Program {
     output: Output,
 }
 
+fn parameters_for(instruction: Instruction) -> Vec<Parameter> {
+    let mut params = vec![];
+
+    params
+}
+
+fn digit_at_place(source: i32, place: i32) -> i32 {
+    let power = i32::pow(10, place as u32);
+    ((source - (source % power)) / power) % 10
+}
+
 impl From<&str> for Program {
     fn from(code: &str) -> Self {
         let intcode = code.trim().split(',');
@@ -50,6 +61,7 @@ impl Program {
 
     fn execute_at_pointer(&mut self, pointer: Pointer, input: Input) {
         let instruction = self.intcode[pointer];
+        let parameters = parameters_for(instruction);
 
         if instruction == 99 {
             return;
