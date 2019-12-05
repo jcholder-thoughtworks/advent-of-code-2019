@@ -1,3 +1,5 @@
+use std::convert::From;
+
 pub type Intcode = Vec<i32>;
 pub type Pointer = usize;
 pub type Input = i32;
@@ -7,13 +9,16 @@ pub const OUTPUT: Pointer = 0;
 pub const NOUN: Pointer = 1;
 pub const VERB: Pointer = 2;
 
-pub fn parse_code(code: String) -> Intcode {
-    let intcode = code.trim().split(',');
-    intcode.map(|c| c.parse().unwrap()).collect()
-}
-
 pub struct Program {
     intcode: Intcode
+}
+
+impl From<&str> for Program {
+    fn from(code: &str) -> Self {
+        let intcode = code.trim().split(',');
+        let intcode = intcode.map(|c| c.parse().unwrap()).collect();
+        Self::new(intcode)
+    }
 }
 
 impl Program {
