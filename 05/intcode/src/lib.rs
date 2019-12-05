@@ -12,6 +12,20 @@ pub fn parse_code(code: String) -> Intcode {
     intcode.map(|c| c.parse().unwrap()).collect()
 }
 
+pub struct Program {
+    intcode: Intcode
+}
+
+impl Program {
+    pub fn new(intcode: Intcode) -> Self {
+        Self { intcode }
+    }
+
+    pub fn execute(&mut self, input: Input) -> Output {
+        0
+    }
+}
+
 pub fn execute_intcode(intcode: Intcode, input: Input) -> (Intcode, Output) {
     execute_intcode_at_pointer(intcode, 0, input)
 }
