@@ -26,11 +26,35 @@ pub struct Program {
     output: Output,
 }
 
-fn parameters_for(instruction: Instruction) -> Vec<Parameter> {
+/*
+fn parameters_for(instruction: Instruction, raw_value: i32) -> Vec<Parameter> {
     let mut params = vec![];
+
+    let param_count = match instruction {
+        1 => 3,
+        2 => 3,
+        3 => 1,
+        4 => 1,
+        _ => panic!("Unrecognized instruction {:?}", instruction),
+    };
+
+    for index in 1..=param_count {
+        let mode_code = digit_at_place(raw_value, index);
+        let mode = match mode_code {
+            0 => ParameterMode::Position,
+            1 => ParameterMode::Immediate,
+            _ => panic!("Unrecognized parameter mode code {} in instruction {:?}", mode_code, instruction),
+        };
+        let param = Parameter {
+            mode,
+            value: 0, // todo: re-assign later
+        };
+        params.push(param);
+    }
 
     params
 }
+*/
 
 fn digit_at_place(source: i32, place: i32) -> i32 {
     let power = i32::pow(10, place as u32);
@@ -61,7 +85,7 @@ impl Program {
 
     fn execute_at_pointer(&mut self, pointer: Pointer, input: Input) {
         let instruction = self.intcode[pointer];
-        let parameters = parameters_for(instruction);
+        //let parameters = parameters_for(instruction, raw_value);
 
         if instruction == 99 {
             return;
