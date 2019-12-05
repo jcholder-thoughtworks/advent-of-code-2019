@@ -10,6 +10,11 @@ pub const OUTPUT: Pointer = 0;
 pub const NOUN: Pointer = 1;
 pub const VERB: Pointer = 2;
 
+const ADD: Instruction = 1;
+const MULTIPLY: Instruction  = 2;
+const STORE_INPUT: Instruction  = 3;
+const FETCH_OUTPUT: Instruction  = 4;
+
 enum ParameterMode {
     Position,
     Immediate,
@@ -92,10 +97,10 @@ impl Program {
         }
 
         let new_pointer = match instruction {
-            1 => self.perform_add_at(pointer),
-            2 => self.perform_multiply_at(pointer),
-            3 => self.store_input(input, pointer),
-            4 => self.fetch_output(pointer),
+            ADD => self.perform_add_at(pointer),
+            MULTIPLY => self.perform_multiply_at(pointer),
+            STORE_INPUT => self.store_input(input, pointer),
+            FETCH_OUTPUT => self.fetch_output(pointer),
             _ => panic!("Unrecognized instruction: {:?}", instruction),
         };
 
