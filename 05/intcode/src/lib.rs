@@ -31,6 +31,8 @@ impl Program {
     }
 
     fn execute_at_pointer(&mut self, pointer: Pointer, input: Input) -> Output {
+        let mut output: Output = 0;
+
         let command = self.intcode[pointer];
 
         if command == 99 {
@@ -40,10 +42,24 @@ impl Program {
         let new_pointer = match command {
             1 => self.perform_add_at(pointer),
             2 => self.perform_multiply_at(pointer),
+            3 => self.store_input(input, pointer),
+            4 => self.fetch_output(&mut output, pointer),
             _ => panic!("Unrecognized command: {:?}", command),
         };
 
         self.execute_at_pointer(new_pointer, input)
+    }
+
+    fn store_input(&mut self, input: Input, pointer: Pointer) -> Pointer {
+        // null op until implemented
+
+        pointer + 2
+    }
+
+    fn fetch_output(&self, output: &mut Output, pointer: Pointer) -> Pointer {
+        // null op until implemented
+
+        pointer + 2
     }
 
     fn perform_add_at(&mut self, pointer: Pointer) -> Pointer {
@@ -140,7 +156,6 @@ pub mod tests {
     }
 
     #[test]
-    #[ignore]
     fn basic_input_output() {
         let mut program = Program::new(vec![3,0,4,0,99]);
 
